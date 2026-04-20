@@ -164,28 +164,51 @@ class PlayerViewModel : ViewModel() {
     }
 
     private fun playLocalTrack(track: Track) {
-        try {
-            localPlayer?.release()
-            localPlayer = android.media.MediaPlayer().apply {
-                setDataSource(track.localUri.toString())
-                prepare()
-                start()
-                setOnCompletionListener {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                localPlayer?.release()
+                localPlayer = null
+
+                val mp = android.media.MediaPlayer().also { localPlayer = it }
+
+                // Required on Android 12+ — without this, prepare() silently fails
+                mp.setAudioAttributes(
+                    android.media.AudioAttributes.Builder()
+                        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(android.media.AudioAttributes.USAGE_MEDIA)
+                        .build()
+                )
+
+                // Use context-aware setDataSource so content:// URIs resolve correctly
+                mp.setDataSource(appContext!!, track.localUri!!)
+                mp.prepare()   // synchronous — fine on IO dispatcher
+
+                val durationMs = mp.duration.toLong()
+
+                mp.setOnCompletionListener {
                     val pb = _playback.value
                     when (pb.repeatMode) {
-                        RepeatMode.ONE -> { seekTo(0); start() }
+                        RepeatMode.ONE -> { it.seekTo(0); it.start() }
                         RepeatMode.ALL, RepeatMode.OFF -> skipNext()
                     }
                 }
+
+                withContext(Dispatchers.Main) {
+                    mp.start()
+                    _playback.value = _playback.value.copy(
+                        track      = track.copy(durationMs = durationMs),
+                        isPlaying  = true,
+                        source     = TrackSource.LOCAL,
+                        positionMs = 0L
+                    )
+                    Log.d("PlayerVM", "Playing: ${track.title} (${durationMs}ms)")
+                }
+            } catch (e: Exception) {
+                Log.e("PlayerVM", "Failed to play: ${track.title} uri=${track.localUri}", e)
+                withContext(Dispatchers.Main) {
+                    _playback.value = _playback.value.copy(isPlaying = false)
+                }
             }
-            _playback.value = _playback.value.copy(
-                track     = track.copy(durationMs = localPlayer?.duration?.toLong() ?: 0L),
-                isPlaying = true,
-                source    = TrackSource.LOCAL,
-                positionMs = 0L
-            )
-        } catch (e: Exception) {
-            Log.e("PlayerVM", "Failed to play local track", e)
         }
     }
 
