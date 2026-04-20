@@ -26,6 +26,10 @@
         android:theme="@style/Theme.CubicAuto"
         tools:targetApi="31">
 
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
         <!-- ── Main activity ─────────────────────────────────────────────── -->
         <activity
             android:name=".MainActivity"

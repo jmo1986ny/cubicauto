@@ -138,7 +138,30 @@ class PlayerViewModel : ViewModel() {
         _positionMs.value = ms
     }
 
-    fun toggleShuffle() = SpotifyRepository.setShuffle(!_playback.value.shuffle)
+    fun toggleShuffle() {
+        val newShuffle = !_playback.value.shuffle
+        _playback.value = _playback.value.copy(shuffle = newShuffle)
+        // Also update Spotify side when connected
+        if (_playback.value.source == TrackSource.SPOTIFY) {
+            SpotifyRepository.setShuffle(newShuffle)
+        }
+        // Reshuffle or restore queue order
+        val q = _queue.value
+        if (q.isNotEmpty()) {
+            if (newShuffle) {
+                val current = q[queueIndex]
+                val rest    = (q - current).shuffled()
+                _queue.value = listOf(current) + rest
+                queueIndex   = 0
+            } else {
+                // Restore MediaStore order (re-sort by title)
+                _queue.value = q.sortedBy { it.title.lowercase() }
+                queueIndex   = _queue.value.indexOfFirst {
+                    it.id == _playback.value.track.id
+                }.coerceAtLeast(0)
+            }
+        }
+    }
 
     fun cycleRepeat() {
         val next = when (_playback.value.repeatMode) {

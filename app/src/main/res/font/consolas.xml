@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Downloadable font configuration.
+    Uses JetBrains Mono via Google Fonts as a Consolas substitute.
+    If you have a licensed Consolas.ttf, replace this file with the .ttf
+    and update the Font() reference in CubicPlayerScreen.kt to use:
+      Font(R.font.consolas)
+-->
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:fontProviderAuthority="com.google.android.gms.fonts"
+        app:fontProviderPackage="com.google.android.gms"
+        app:fontProviderQuery="JetBrains Mono"
+        app:fontProviderCerts="@array/com_google_android_gms_fonts_certs">
+</font-family>
