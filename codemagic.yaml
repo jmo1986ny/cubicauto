@@ -28,11 +28,22 @@ workflows:
 
       - name: Build debug APK
         script: |
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug \
+            --no-daemon \
+            --stacktrace \
+            --info \
+            2>&1 | tee build_full.log
+          # Print just Kotlin errors so they're visible in Codemagic log
+          echo "=== KOTLIN ERRORS ==="
+          grep -E "error:|warning:|\.kt:[0-9]+" build_full.log | head -80 || true
+          echo "=== END ERRORS ==="
+          # Fail if build failed
+          grep -q "BUILD SUCCESSFUL" build_full.log || exit 1
 
     artifacts:
       - app/build/outputs/apk/debug/*.apk
       - app/build/outputs/logs/**
+      - build_full.log
 
     publishing:
       email:
