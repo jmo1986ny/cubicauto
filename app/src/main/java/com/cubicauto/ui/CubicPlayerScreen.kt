@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cubicauto.model.PlaybackState
-import com.cubicauto.model.RepeatMode
+import com.cubicauto.model.RepeatMode as PlayerRepeatMode
 import com.cubicauto.model.SpotifyConnectionState
 import com.cubicauto.model.Track
 
@@ -314,8 +314,8 @@ private fun ControlsRow(state: PlaybackState, vm: PlayerViewModel) {
         Spacer(Modifier.width(14.dp))
         CBtn("⇄", 40.dp, 32.dp, active = state.shuffle, activeColor = C.accent2, onClick = vm::toggleShuffle)
         Spacer(Modifier.width(4.dp))
-        CBtn(if (state.repeatMode == RepeatMode.ONE) "↺" else "↻", 40.dp, 32.dp,
-            active = state.repeatMode != RepeatMode.OFF, onClick = vm::cycleRepeat)
+        CBtn(if (state.repeatMode == PlayerRepeatMode.ONE) "↺" else "↻", 40.dp, 32.dp,
+            active = state.repeatMode != PlayerRepeatMode.OFF, onClick = vm::cycleRepeat)
         Spacer(Modifier.width(4.dp))
         CBtn("☰", 40.dp, 32.dp)
     }
