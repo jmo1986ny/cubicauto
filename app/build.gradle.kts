@@ -62,5 +62,6 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.service)
     implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.appcompat)
     debugImplementation(libs.compose.ui.tooling)
 }
