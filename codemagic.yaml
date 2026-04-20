@@ -4,43 +4,31 @@ workflows:
     max_build_duration: 30
     environment:
       java: 17
-      android_signing:
-        - cubicauto_keystore        # not needed for debug — remove if you get errors
       vars:
         PACKAGE_NAME: "com.cubicauto"
+
     scripts:
-      - name: Set up Android SDK licenses
+      - name: Accept Android SDK licenses
         script: |
           yes | sdkmanager --licenses > /dev/null 2>&1 || true
+
+      - name: Download Gradle wrapper jar
+        script: |
+          mkdir -p gradle/wrapper
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            curl -fsSL \
+              "https://github.com/gradle/gradle/raw/v8.9.0/gradle/wrapper/gradle-wrapper.jar" \
+              -o gradle/wrapper/gradle-wrapper.jar
+          fi
+          ls -lh gradle/wrapper/
 
       - name: Make gradlew executable
         script: |
           chmod +x gradlew
 
-      - name: Download Spotify App Remote SDK
-        script: |
-          # The Spotify SDK .aar is not on Maven Central — we stub it out for the
-          # debug build so the app compiles and runs in demo mode (no real Spotify
-          # connection, but the full Cubic UI works).
-          #
-          # When you have your Client ID and SHA-1 registered, replace this step with:
-          #   curl -L "https://<your-cdn-or-gdrive-link>/spotify-app-remote-release-0.8.0.aar" \
-          #        -o app/libs/spotify-app-remote-release-0.8.0.aar
-          #
-          # For now we create an empty placeholder so Gradle doesn't error on the
-          # fileTree() dependency line.  The SpotifyRepository stub path handles
-          # everything at runtime.
-          mkdir -p app/libs
-          # Create a minimal valid empty .aar (just an empty zip)
-          cd app/libs && zip -q spotify-app-remote-release-0.8.0.aar -@ < /dev/null && cd ../..
-          echo "Spotify SDK placeholder created (demo/stub mode)"
-
       - name: Build debug APK
         script: |
-          ./gradlew assembleDebug \
-            --no-daemon \
-            --stacktrace \
-            -Pandroid.suppressUnsupportedOptionWarnings=android.suppressUnsupportedOptionWarnings
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
     artifacts:
       - app/build/outputs/apk/debug/*.apk
@@ -49,7 +37,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - YOUR_EMAIL@example.com     # ← replace with your email
+          - YOUR_EMAIL@example.com
         notify:
           success: true
           failure: true
