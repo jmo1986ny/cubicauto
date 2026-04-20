@@ -5,30 +5,50 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-  <!-- Outer ring -->
+  <!-- Outer glow ring -->
   <path
       android:fillColor="#00E5FF"
-      android:pathData="M54,18 A36,36 0 1 1 53.999,18 Z"
-      android:strokeColor="#00E5FF"
-      android:strokeWidth="3"/>
+      android:pathData="M54,20 A34,34 0 1 1 53.99,20 Z"/>
 
-  <!-- Inner ring -->
+  <!-- Inner black fill -->
   <path
       android:fillColor="#0A0A0C"
-      android:pathData="M54,22 A32,32 0 1 1 53.999,22 Z"/>
+      android:pathData="M54,24 A30,30 0 1 1 53.99,24 Z"/>
 
-  <!-- C letter (Cubic) -->
+  <!-- Letter C -->
   <path
       android:fillColor="#00E5FF"
-      android:pathData="M60,38 C54,35 44,38 42,48 C40,58 45,67 54,68
-                        C60,68.5 65,65 67,61 L62,59 C61,62 58,64 54,64
-                        C48,64 45,59 46,52 C47,45 52,41 58,42
-                        C61,42.5 63,44 64,46 L69,44 C67,41 64,38.5 60,38 Z"/>
+      android:pathData="M62,36 C57,33 46,35 43,46 C40,57 46,68 56,68
+                        C61,68 65,65 67,61 L62,59
+                        C61,62 58,64 55,63
+                        C49,62 46,56 48,49
+                        C50,43 55,40 61,41
+                        C63,42 65,43 66,45 L71,43
+                        C69,40 66,37 62,36 Z"/>
 
-  <!-- Spectrum bars (decorative) -->
-  <rect android:x="44" android:y="72" android:width="3" android:height="10" android:fillColor="#00FF9D"/>
-  <rect android:x="49" android:y="69" android:width="3" android:height="13" android:fillColor="#00E5FF"/>
-  <rect android:x="54" android:y="66" android:width="3" android:height="16" android:fillColor="#00E5FF"/>
-  <rect android:x="59" android:y="70" android:width="3" android:height="12" android:fillColor="#00FF9D"/>
-  <rect android:x="64" android:y="73" android:width="3" android:height="9"  android:fillColor="#00FF9D"/>
+  <!-- Spectrum bar 1 -->
+  <path
+      android:fillColor="#00FF9D"
+      android:pathData="M44,73 L47,73 L47,82 L44,82 Z"/>
+
+  <!-- Spectrum bar 2 -->
+  <path
+      android:fillColor="#00E5FF"
+      android:pathData="M49,70 L52,70 L52,82 L49,82 Z"/>
+
+  <!-- Spectrum bar 3 (tallest) -->
+  <path
+      android:fillColor="#00E5FF"
+      android:pathData="M54,66 L57,66 L57,82 L54,82 Z"/>
+
+  <!-- Spectrum bar 4 -->
+  <path
+      android:fillColor="#00E5FF"
+      android:pathData="M59,70 L62,70 L62,82 L59,82 Z"/>
+
+  <!-- Spectrum bar 5 -->
+  <path
+      android:fillColor="#00FF9D"
+      android:pathData="M64,74 L67,74 L67,82 L64,82 Z"/>
+
 </vector>
