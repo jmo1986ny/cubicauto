@@ -9,7 +9,10 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
 import com.cubicauto.CubicAutoApplication
@@ -44,6 +47,7 @@ class CubicMediaService : MediaBrowserServiceCompat() {
         const val ACTION_SKIP_PREVIOUS = "com.cubicauto.SKIP_PREVIOUS"
     }
 
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private lateinit var session: MediaSessionCompat
     private lateinit var stateBuilder: PlaybackStateCompat.Builder
 
@@ -83,7 +87,7 @@ class CubicMediaService : MediaBrowserServiceCompat() {
 
         SpotifyRepository.playbackState
             .onEach { pushToSession(it) }
-            .launchIn(lifecycleScope)
+            .launchIn(serviceScope)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -93,6 +97,7 @@ class CubicMediaService : MediaBrowserServiceCompat() {
 
     override fun onDestroy() {
         super.onDestroy()
+        serviceScope.cancel()
         session.release()
         SpotifyRepository.disconnect()
     }
